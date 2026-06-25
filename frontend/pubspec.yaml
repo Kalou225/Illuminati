@@ -1,0 +1,39 @@
+name: illuminati_frontend
+description: "Application web de parrainage multi-niveaux pour Illuminati CI"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.2.3 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # HTTP pour les appels API
+  http: ^1.1.0
+  
+  # Gestion d'état
+  provider: ^6.1.1
+  
+  # Routage
+  go_router: ^13.0.0
+  
+  # Stockage local pour les tokens
+  shared_preferences: ^2.2.2
+  
+  # Formulaires et validation
+  form_field_validator: ^1.1.0
+  
+  # Icons
+  cupertino_icons: ^1.0.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  
+  # Linting
+  flutter_lints: ^3.0.1
+
+flutter:
+  uses-material-design: true

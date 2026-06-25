@@ -35,7 +35,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'corsheaders.middleware.CorsMiddleware', # Doit être en haut
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -104,10 +104,17 @@ REST_FRAMEWORK = {
 }
 
 # CORS (Pour autoriser Flutter à parler à Django)
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8080", # Port par défaut de Flutter Web
-    "http://127.0.0.1:8080",
-]
+CORS_ALLOW_ALL_ORIGINS = True  # Pour le développement uniquement
+
+# Ou plus sécurisé (recommandé pour la production) :
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:35687",
+#     "http://127.0.0.1:35687",
+#     "http://localhost:8080",
+# ]
+
+# Autoriser les credentials (cookies, headers d'authentification)
+CORS_ALLOW_CREDENTIALS = True
 
 # Indique à Django d'utiliser notre modèle User personnalisé
 AUTH_USER_MODEL = 'accounts.User'

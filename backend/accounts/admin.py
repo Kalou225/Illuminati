@@ -17,7 +17,7 @@ class UserAdmin(BaseUserAdmin):
         (None, {'fields': ('email', 'password')}),
         ('Informations personnelles', {'fields': ('full_name', 'phone_number', 'grade', 'sponsor', 'referral_code')}),
         ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
-        ('Dates importantes', {'fields': ('date_joined',)}),
+        ('Dates importantes', {'fields': ('date_joined',), 'classes': ('collapse',)}),
     )
 
     # Champs pour créer un nouvel utilisateur
@@ -27,3 +27,6 @@ class UserAdmin(BaseUserAdmin):
             'fields': ('email', 'full_name', 'phone_number', 'grade', 'password1', 'password2'),
         }),
     )
+    
+    # Champs en lecture seule
+    readonly_fields = ('date_joined',)

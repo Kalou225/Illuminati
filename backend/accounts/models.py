@@ -68,7 +68,15 @@ class User(AbstractBaseUser, PermissionsMixin):
     # On utilise l'email pour se connecter au lieu du username
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['phone_number', 'full_name']
-
+    def save(self, *args, **kwargs):
+        # Générer un code de parrainage unique si l'utilisateur n'en a pas
+        if not self.referral_code:
+            import uuid
+            # Crée un code court basé sur le nom et un identifiant unique
+            short_uuid = uuid.uuid4().hex[:4].upper()
+            name_prefix = self.full_name.split()[0][:3].upper() if self.full_name else 'USR'
+            self.referral_code = f"{name_prefix}-{short_uuid}"
+        super().save(*args, **kwargs)
     class Meta:
         verbose_name = "Utilisateur"
         verbose_name_plural = "Utilisateurs"

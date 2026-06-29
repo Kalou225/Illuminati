@@ -15,39 +15,52 @@ class UserSerializer(serializers.ModelSerializer):
             'sponsor', 'sponsor_name', 'referral_code',
             'is_active', 'date_joined'
         ]
-        read_only_fields = ['id', 'date_joined']
+        read_only_fields = ['id', 'date_joined', 'referral_code']
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     """Serializer pour l'inscription d'un nouvel utilisateur."""
     password = serializers.CharField(write_only=True, min_length=8)
     password_confirm = serializers.CharField(write_only=True, min_length=8)
+    referral_code = serializers.CharField(write_only=True, required=False, allow_blank=True)
     
     class Meta:
         model = User
         fields = [
             'email', 'phone_number', 'full_name', 'password', 
-            'password_confirm', 'sponsor', 'referral_code'
+            'password_confirm', 'referral_code'
         ]
     
     def validate(self, data):
         # Vérifier que les mots de passe correspondent
         if data['password'] != data['password_confirm']:
-            raise serializers.ValidationError("Les mots de passe ne correspondent pas.")
+            raise serializers.ValidationError({"password_confirm": "Les mots de passe ne correspondent pas."})
+        
+        # Vérifier que le code de parrainage existe (si fourni)
+        referral_code = data.get('referral_code', '').strip()
+        if referral_code:
+            try:
+                data['sponsor'] = User.objects.get(referral_code=referral_code)
+            except User.DoesNotExist:
+                raise serializers.ValidationError({"referral_code": "Ce code de parrainage n'existe pas."})
+        else:
+            data['sponsor'] = None
+        
         return data
     
     def create(self, validated_data):
-        # Retirer password_confirm car ce n'est pas un champ du modèle
+        # Retirer les champs qui ne sont pas dans le modèle
         validated_data.pop('password_confirm')
+        sponsor = validated_data.pop('sponsor', None)
+        validated_data.pop('referral_code', None)  # IMPORTANT : Ne pas assigner le code du parrain !
         
-        # Créer l'utilisateur
+        # Créer l'utilisateur (le code sera généré automatiquement par save())
         user = User.objects.create_user(
             email=validated_data['email'],
             phone_number=validated_data['phone_number'],
             full_name=validated_data['full_name'],
             password=validated_data['password'],
-            sponsor=validated_data.get('sponsor'),
-            referral_code=validated_data.get('referral_code')
+            sponsor=sponsor,
         )
         
         return user
